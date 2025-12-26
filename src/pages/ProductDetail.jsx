@@ -249,20 +249,15 @@ const ProductDetail = () => {
             </div>
           )}
           
-          <div className="product-actions">
-            <button 
-              className="add-to-cart-btn primary-btn"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </button>
-            <button 
-              className="wishlist-btn secondary-btn"
-              onClick={handleAddToWishlist}
-            >
-              ♡ Add to Wishlist
-            </button>
-          </div>
+        <div className="product-actions">
+  <button
+    className="go-to-shop-btn primary-btn"
+    onClick={() => navigate("/shop")}
+  >
+    Go to Shopping
+  </button>
+</div>
+
         </div>
       </div>
     </div>

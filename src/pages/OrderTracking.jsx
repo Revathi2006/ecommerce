@@ -311,11 +311,7 @@ const OrderTracking = () => {
         <button onClick={() => navigate('/')} className="primary-btn">
           Continue Shopping
         </button>
-        {order.status !== 'delivered' && order.status !== 'cancelled' && (
-          <button className="support-btn">
-            Contact Support
-          </button>
-        )}
+
       </div>
     </div>
   );

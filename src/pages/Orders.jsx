@@ -163,12 +163,12 @@ const Orders = () => {
                   >
                     Track Order
                   </button>
-                  <button 
-                    onClick={() => navigate(`/order/${order.id}`)}
-                    className="view-details-btn"
-                  >
-                    View Details
-                  </button>
+                  {/* Show Delivered info if status is delivered */}
+                  {order.status === 'delivered' && (
+                    <span className="delivered-info">
+                      Delivered on {formatDate(order.deliveredAt)}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

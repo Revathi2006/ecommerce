@@ -36,6 +36,9 @@ const Home = () => {
   const [loadingRecommendations, setLoadingRecommendations] = useState(true); 
   const [loadingOffers, setLoadingOffers] = useState(true); 
   const [ordersCount, setOrdersCount] = useState(0);
+  const [isChatbotHovered, setIsChatbotHovered] = useState(false);
+  const [showCloudAssistant, setShowCloudAssistant] = useState(true);
+  const [isCloudHovered, setIsCloudHovered] = useState(false);
 
   // Get all products from both collections 
   const getAllProducts = useCallback(async () => { 
@@ -321,6 +324,17 @@ const Home = () => {
 
   const handleVendorClick = () => setShowVendorChoice(true); 
   const handleAdminClick = () => setShowAdminChoice(true); 
+  
+  // Handle chatbot navigation
+  const handleChatbotClick = () => {
+    navigate("/chatbot");
+  };
+
+  // Handle cloud assistant click
+  const handleCloudAssistantClick = () => {
+    // Open chatbot in a small modal on the same page
+    navigate("/chatbot");
+  };
 
   const handleProductClick = (product) => {
     console.log('Product clicked:', product);
@@ -333,12 +347,18 @@ const Home = () => {
     }
 
     // Navigate to product detail page
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.id}`, {
+      state: { fromRecommendation: true }
+    });
   };
 
-  const handleBrowseProducts = () => { 
-    navigate("/products"); 
-  }; 
+  const handleBrowseProducts = () => {
+    if (user) {
+      navigate("/shop");      // ✅ logged-in users
+    } else {
+      navigate("/products"); // ✅ guests
+    }
+  };
 
   const handleImageError = (e) => { 
     e.target.src = "https://via.placeholder.com/300x200/AAA/666666?text=No+Image"; 
@@ -354,44 +374,132 @@ const Home = () => {
 
   return ( 
     <div className="home-container"> 
+      {/* Floating Chatbot Button */}
+      <div 
+        className={`floating-chatbot-btn ${isChatbotHovered ? 'hovered' : ''}`}
+        onClick={handleChatbotClick}
+        onMouseEnter={() => setIsChatbotHovered(true)}
+        onMouseLeave={() => setIsChatbotHovered(false)}
+      >
+       
+      </div>
+
+      {/* Cloud AI Assistant Widget */}
+      {showCloudAssistant && (
+        <div 
+          className={`cloud-ai-assistant ${isCloudHovered ? 'cloud-hovered' : ''}`}
+          onMouseEnter={() => setIsCloudHovered(true)}
+          onMouseLeave={() => setIsCloudHovered(false)}
+        >
+          <div className="cloud-container" onClick={handleCloudAssistantClick}>
+            <div className="cloud-icon">
+              <span>☁️</span>
+              <div className="cloud-pulse"></div>
+              <div className="cloud-sparkle">✨</div>
+            </div>
+            <div className="cloud-text">
+              <span className="cloud-title">AI Assistant</span>
+              <span className="cloud-subtitle">Ask Carty anything</span>
+            </div>
+            <button 
+              className="cloud-close" 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCloudAssistant(false);
+              }}
+            >
+              ×
+            </button>
+          </div>
+          
+          {isCloudHovered && (
+            <div className="cloud-tooltip">
+              <div className="cloud-tooltip-header">
+                <span>☁️</span>
+                <h4>Carty AI Assistant</h4>
+              </div>
+              <p>Get instant help with shopping, payments, orders, and more!</p>
+              <div className="cloud-quick-options">
+                <button onClick={() => navigate("/buyer/login")}>Login Help</button>
+                <button onClick={() => navigate("/cart")}>Payment Help</button>
+                <button onClick={() => navigate("/orders")}>Track Order</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <header className="home-header"> 
-        <h1>Cartify</h1> 
-        <p className="tagline">Smart shopping, better rewards</p> 
+        <div className="header-content">
+          <div className="logo-container">
+            <span className="logo-icon">🛒</span>
+            <div>
+              <h1>Cartify</h1>
+              <p className="tagline">Smart shopping, better rewards</p>
+            </div>
+          </div>
+          <div className="header-actions">
+            <div className="points-display">
+              <span>🎁</span>
+              <span>{points} Points</span>
+            </div>
+          </div>
+        </div>
       </header> 
 
       <nav className="navbar"> 
-        <button onClick={() => navigate("/")} className="nav-btn">Home</button> 
-        <button onClick={handleBrowseProducts} className="nav-btn">Products</button> 
+        <button onClick={() => navigate("/")} className="nav-btn home-btn">
+          <span>⚡</span>
+          <span>Home</span>
+        </button> 
+        <button onClick={handleBrowseProducts} className="nav-btn products-btn">
+          <span>🛒</span>
+          <span>Products</span>
+        </button> 
 
         {user ? ( 
           <> 
-            <button className="nav-btn" onClick={() => navigate("/buyer/cart")}>Cart</button> 
+            <button className="nav-btn" onClick={() => navigate("/buyer/cart")}>
+              <span>Cart</span>
+              {ordersCount > 0 && <span className="cart-badge">{ordersCount}</span>}
+            </button> 
             <button className="nav-btn" onClick={() => navigate("/buyer/wishlist")}>Wish List</button> 
             <button className="nav-btn" onClick={() => navigate("/orders")}>
               My Orders {ordersCount > 0 && <span className="orders-badge">{ordersCount}</span>}
             </button> 
-            <button id="logout-btn" className="nav-btn" onClick={handleLogout}>Logout</button> 
+            <button id="logout-btn" className="nav-btn logout-btn" onClick={handleLogout}>Logout</button> 
           </> 
         ) : ( 
           <> 
-            <button className="nav-btn" onClick={() => navigate("/buyer/signup")}>Sign Up</button> 
-            <button className="nav-btn" onClick={() => navigate("/buyer/login")}>Login</button> 
+            <button className="nav-btn signup-btn" onClick={() => navigate("/buyer/signup")}>
+              <span>✨</span>
+              <span>Sign Up</span>
+            </button> 
+            <button className="nav-btn login-btn" onClick={() => navigate("/buyer/login")}>Login</button> 
           </> 
         )} 
 
-        <button className="start-btn" onClick={handleVendorClick}>Become a Vendor</button> 
-        <button className="start-btn" onClick={handleAdminClick}>Admin Login</button> 
-        <button className="start-btn" onClick={handleBrowseProducts}>Start shopping</button> 
+        <button className="start-btn vendor-btn" onClick={handleVendorClick}>
+          <span>Become a Vendor</span>
+        </button> 
+        <button className="start-btn admin-btn" onClick={handleAdminClick}>Admin Login</button> 
+        <button className="start-btn shop-btn" onClick={handleBrowseProducts}>
+          <span>🛒</span>
+          <span>Start shopping</span>
+        </button> 
       </nav> 
 
       {showVendorChoice && ( 
         <div className="popup-overlay"> 
           <div className="popup"> 
-            <h3>Become a Vendor</h3> 
+            <h3>Become a Vendor</h3>
+            <div className="popup-icon">
+              ✨
+            </div>
             <p>Please choose an option:</p> 
             <div className="popup-actions"> 
-              <button className="popup-btn" onClick={() => navigate("/seller/signup")}>Seller Sign Up</button> 
-              <button className="popup-btn" onClick={() => navigate("/seller/login")}>Seller Login</button> 
+              <button className="popup-btn vendor-signup-btn" onClick={() => navigate("/seller/signup")}>Seller Sign Up</button> 
+              <button className="popup-btn vendor-login-btn" onClick={() => navigate("/seller/login")}>Seller Login</button> 
               <button className="popup-btn cancel" onClick={() => setShowVendorChoice(false)}>Cancel</button> 
             </div> 
           </div> 
@@ -401,10 +509,13 @@ const Home = () => {
       {showAdminChoice && ( 
         <div className="popup-overlay"> 
           <div className="popup"> 
-            <h3>Admin Login</h3> 
+            <h3>Admin Login</h3>
+            <div className="popup-icon">
+              ⚡
+            </div>
             <p>Proceed to admin login page:</p> 
             <div className="popup-actions"> 
-              <button className="popup-btn" onClick={() => navigate("/admin/login")}>Login as Admin</button> 
+              <button className="popup-btn admin-login-btn" onClick={() => navigate("/admin/login")}>Login as Admin</button> 
               <button className="popup-btn cancel" onClick={() => setShowAdminChoice(false)}>Cancel</button> 
             </div> 
           </div> 
@@ -413,25 +524,67 @@ const Home = () => {
 
       {buyer && ( 
         <section className="profile-card"> 
-          <h2>My Profile</h2> 
+          <div className="profile-header">
+            <h2>
+              <span>✨</span>
+              My Profile
+            </h2>
+            <div className="profile-badge">
+              <span>{points} Points</span>
+            </div>
+          </div>
           <div className="profile-details"> 
-            <p><strong>Name:</strong> {buyer.fullName}</p> 
-            <p><strong>Email:</strong> {buyer.email}</p> 
-            <p><strong>Phone:</strong> {buyer.phone || "Not provided"}</p> 
-            <p><strong>Address:</strong> {buyer.address || "Not provided"}</p> 
-            <p><strong>Location Verified:</strong> {buyer.isLocationVerified ? " Yes" : " No"}</p> 
-            <p><strong>Reward Points:</strong> {points} </p> 
-            <p><strong>Total Orders:</strong> {ordersCount} </p> 
+            <div className="detail-item">
+              <strong>Name:</strong> 
+              <span>{buyer.fullName}</span>
+            </div>
+            <div className="detail-item">
+              <strong>Email:</strong> 
+              <span>{buyer.email}</span>
+            </div>
+            <div className="detail-item">
+              <strong>Phone:</strong> 
+              <span>{buyer.phone || "Not provided"}</span>
+            </div>
+            <div className="detail-item">
+              <strong>Address:</strong> 
+              <span>{buyer.address || "Not provided"}</span>
+            </div>
+            <div className="detail-item">
+              <strong>Location Verified:</strong> 
+              <span className={buyer.isLocationVerified ? "verified" : "not-verified"}>
+                {buyer.isLocationVerified ? "✓ Yes" : "✗ No"}
+              </span>
+            </div>
+            <div className="detail-item">
+              <strong>Total Orders:</strong> 
+              <span className="orders-count">{ordersCount}</span>
+            </div>
           </div> 
         </section> 
       )} 
 
       <section className="offers-section"> 
-        <h2>Special Offers</h2> 
+        <div className="section-header">
+          <h2>
+            <span>🎁</span>
+            Special Offers
+          </h2>
+          <div className="offer-counter">
+            {currentIndex + 1} / {offersList.length}
+          </div>
+        </div>
         {loadingOffers ? ( 
-          <div className="loading-offers">Loading offers...</div> 
+          <div className="loading-offers">
+            <div className="loading-spinner"></div>
+            <p>Loading amazing offers...</p>
+          </div> 
         ) : offersList.length === 0 ? ( 
-          <p className="no-offers">No offers available right now.</p> 
+          <div className="no-offers-card">
+            <span>🎁</span>
+            <p>No offers available right now.</p>
+            <p className="subtext">Check back soon for exciting deals!</p>
+          </div>
         ) : ( 
           <div className="carousel-wrapper"> 
             {offersList.length > 1 && ( 
@@ -452,8 +605,10 @@ const Home = () => {
                 onError={handleImageError} 
               /> 
               <div className="offer-info"> 
+                <div className="offer-badge">Limited Time Offer</div>
                 <h3>{offersList[currentIndex]?.title}</h3> 
                 <p>{offersList[currentIndex]?.description}</p> 
+                <button className="offer-cta-btn">Shop Now</button>
               </div> 
             </div> 
              
@@ -485,9 +640,22 @@ const Home = () => {
 
       <section className="featured-products"> 
         <div className="recommendations-header"> 
-          <h2>{user ? "Recommended For You" : "Featured Products"}</h2> 
+          <h2>
+            {user ? (
+              <>
+                <span>✨</span>
+                Recommended For You
+              </>
+            ) : (
+              <>
+                <span>⚡</span>
+                Featured Products
+              </>
+            )}
+          </h2> 
           {user && ( 
             <span className="recommendation-badge"> 
+              <span>✨</span>
               Based on your interests 
             </span> 
           )} 
@@ -514,24 +682,37 @@ const Home = () => {
                       alt={product.name} 
                       onError={handleImageError} 
                     /> 
+                    <div className="product-overlay">
+                      <button className="quick-view-btn">Quick View</button>
+                    </div>
                     {product.category && ( 
                       <span className="category-badge">{product.category}</span> 
                     )} 
                   </div> 
                   <div className="product-info"> 
                     <h3>{product.name}</h3> 
-                    <p className="product-price">₹{product.price}</p> 
+                    <div className="price-section">
+                      <p className="product-price">₹{product.price.toLocaleString()}</p>
+                      {product.originalPrice && (
+                        <p className="original-price">₹{product.originalPrice.toLocaleString()}</p>
+                      )}
+                    </div>
                     <p className="product-category">Category: {product.category}</p> 
                      
-                    <button  
-                      className="view-details-btn" 
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the parent click
-                        handleProductClick(product);
-                      }} 
-                    > 
-                      View Details 
-                    </button> 
+                    <div className="product-actions">
+                      <button  
+                        className="view-details-btn" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleProductClick(product);
+                        }} 
+                      > 
+                        View Details 
+                      </button> 
+                      <button className="add-to-wishlist-btn">
+                        ♡
+                      </button>
+                    </div>
                   </div> 
                 </div> 
               ))} 
@@ -542,17 +723,33 @@ const Home = () => {
                 className="browse-more-btn" 
                 onClick={handleBrowseProducts} 
               > 
-                Browse All Products → 
+                <span>Browse All Products</span>
+                <span>→</span>
               </button> 
             </div> 
           </> 
         ) : ( 
-          <p className="no-recommendations">No products found. Please check back later.</p> 
+          <div className="no-recommendations-card">
+            <span>🛒</span>
+            <p>No products found.</p>
+            <p className="subtext">Please check back later for exciting products!</p>
+          </div>
         )} 
       </section> 
 
       <footer className="home-footer"> 
-        <p>© {new Date().getFullYear()} Cartify. All rights reserved.</p> 
+        <div className="footer-content">
+          <div className="footer-logo">
+            <span>🛒</span>
+            <span>Cartify</span>
+          </div>
+          <p>© {new Date().getFullYear()} Cartify. All rights reserved.</p>
+          <div className="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
+          </div>
+        </div>
       </footer> 
     </div> 
   ); 

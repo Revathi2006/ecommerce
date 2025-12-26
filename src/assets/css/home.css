@@ -1,469 +1,306 @@
-/* home.css */
+/* Add these to your home.css file */
 
-.home-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.home-header {
-  text-align: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  margin-bottom: 2rem;
-}
-
-.home-header h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-}
-
-.tagline {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-.navbar {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem;
-  background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
-}
-
-.nav-btn, .start-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 25px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.nav-btn:hover, .start-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.start-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.popup-overlay {
+/* Cloud AI Assistant Widget */
+.cloud-ai-assistant {
   position: fixed;
+  top: 100px;
+  right: 30px;
+  z-index: 999;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cloud-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 248, 255, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  padding: 15px 20px;
+  border-radius: 50px;
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.25);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.cloud-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  animation: cloudShine 3s infinite linear;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cloud-hovered .cloud-container::before {
+  opacity: 1;
+}
+
+@keyframes cloudShine {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cloud-icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 5px 15px rgba(168, 237, 234, 0.4);
+}
+
+.cloud-pulse {
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.popup-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-.popup-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  background: #667eea;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.popup-btn.cancel {
-  background: #6c757d;
-}
-
-.popup-btn:hover {
-  transform: translateY(-2px);
-}
-
-.profile-card {
-  background: white;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  max-width: 600px;
-}
-
-.profile-details p {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-/* FIXED: offers section */
-.offers-section {
-  text-align: center;
-  margin: 3rem auto;
-  max-width: 1200px;
-  padding: 0 1rem;
-}
-
-.carousel-wrapper {
-  position: relative;
-  margin: 2rem auto;
-  max-width: 800px;
-}
-
-/* FIXED: offer-slide */
-.offer-slide {
-  position: relative;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.offer-img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-}
-
-.offer-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,0.8));
-  color: white;
-  padding: 2rem;
-  text-align: left;
-}
-
-.arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.8);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.left-arrow {
-  left: 1rem;
-}
-
-.right-arrow {
-  right: 1rem;
-}
-
-.arrow:hover {
-  background: white;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.carousel-indicators {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: none;
-  background: #ccc;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.indicator.active {
-  background: #667eea;
-  transform: scale(1.2);
-}
-
-.featured-products {
-  margin: 3rem auto;
-  max-width: 1200px;
-  padding: 0 1rem;
-}
-
-.recommendations-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* FIXED: color gradient and spacing */
-.recommendation-badge {
-  background: linear-gradient(135deg, #6b6b6b 0%, #ee5a24 100%);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  margin-left: 1rem;
-}
-
-.recommended-products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.recommended-product {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-.recommended-product:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-}
-
-.product-image-container {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-
-.product-image-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  animation: cloudPulse 2s infinite;
+  z-index: -1;
 }
 
-.recommended-product:hover .product-image-container img {
-  transform: scale(1.1);
+@keyframes cloudPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 
-.category-badge {
+.cloud-sparkle {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(102, 126, 234, 0.9);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  top: -5px;
+  right: -5px;
+  font-size: 16px;
+  animation: sparkle 1.5s infinite alternate;
 }
 
-.product-info {
-  padding: 1.5rem;
+@keyframes sparkle {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+  100% { transform: scale(1.2) rotate(20deg); opacity: 1; }
 }
 
-.product-info h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
+.cloud-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.cloud-title {
+  font-weight: 700;
   color: #333;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
-.product-price {
-  font-size: 1.3rem;
-  font-weight: bold;
+.cloud-subtitle {
+  font-size: 12px;
   color: #667eea;
-  margin: 0.5rem 0;
+  opacity: 0.9;
+  font-weight: 500;
 }
 
-.view-details-btn {
-  width: 100%;
-  padding: 0.75rem;
+.cloud-close {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.cloud-close:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.cloud-tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  width: 280px;
+  z-index: 1000;
+  animation: tooltipAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+@keyframes tooltipAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cloud-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.cloud-tooltip-header span {
+  font-size: 28px;
+}
+
+.cloud-tooltip-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.cloud-tooltip p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cloud-quick-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cloud-quick-options button {
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
+  border: 1px solid #e0e5ff;
+  border-radius: 10px;
+  color: #667eea;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+  font-size: 14px;
+}
+
+.cloud-quick-options button:hover {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
+  border-color: transparent;
+  transform: translateX(5px);
 }
 
-.view-details-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.loading-products {
-  text-align: center;
-  padding: 3rem;
-}
-
-.loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.features-section {
-  margin: 4rem auto;
-  max-width: 1200px;
-  padding: 0 1rem;
-  text-align: center;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.feature-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-.feature-card:hover {
+/* Hover effects */
+.cloud-container:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 248, 255, 1) 100%);
 }
 
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.cloud-hovered .cloud-icon {
+  animation: cloudFloat 3s ease-in-out infinite;
 }
 
-.home-footer {
-  background: #2c3e50;
-  color: white;
-  padding: 2rem 1rem;
-  margin-top: 4rem;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.footer-section h3,
-.footer-section h4 {
-  margin-bottom: 1rem;
-}
-
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section li {
-  margin: 0.5rem 0;
-}
-
-.footer-section button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: center;
+  .cloud-ai-assistant {
+    top: 80px;
+    right: 20px;
   }
-
-  .home-header h1 {
-    font-size: 2rem;
+  
+  .cloud-container {
+    padding: 12px 15px;
   }
-
-  .recommended-products {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  
+  .cloud-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
   }
-
-  .popup-actions {
-    flex-direction: column;
+  
+  .cloud-text {
+    min-width: 100px;
   }
-
-  .arrow {
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
+  
+  .cloud-title {
+    font-size: 14px;
+  }
+  
+  .cloud-subtitle {
+    font-size: 11px;
+  }
+  
+  .cloud-tooltip {
+    width: 250px;
+    right: -50px;
   }
 }
 
 @media (max-width: 480px) {
-  .home-header h1 {
-    font-size: 1.5rem;
+  .cloud-ai-assistant {
+    top: 70px;
+    right: 10px;
   }
-
-  .tagline {
-    font-size: 1rem;
+  
+  .cloud-container {
+    padding: 10px 12px;
   }
-
-  .recommended-products {
-    grid-template-columns: 1fr;
+  
+  .cloud-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 24px;
   }
-
-  .features-grid {
-    grid-template-columns: 1fr;
+  
+  .cloud-text {
+    min-width: 80px;
+  }
+  
+  .cloud-title {
+    font-size: 13px;
+  }
+  
+  .cloud-subtitle {
+    font-size: 10px;
+  }
+  
+  .cloud-tooltip {
+    width: 220px;
+    right: -30px;
   }
 }
 
-/* Add to home.css */
-.orders-badge {
-  background: #e44d26;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 0.8rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 5px;
-}
-
-.nav-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+/* Floating chatbot button styles (keep existing) */

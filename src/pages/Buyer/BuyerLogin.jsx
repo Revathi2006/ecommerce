@@ -17,7 +17,7 @@ export default function BuyerLogin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // Redirect to Shop page after successful login
-      navigate("/buyer/products"); // <-- make sure your route for Shop.jsx is /buyer/shop
+      navigate("/buyer/Shop"); // <-- make sure your route for Shop.jsx is /buyer/shop
     } catch (err) {
       setError(err.message);
     }

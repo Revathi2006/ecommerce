@@ -28,6 +28,9 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminApprove from "./pages/Admin/AdminApprove";
 import AdminLogin from "./pages/Admin/AdminLogin";
 
+// 🔹 Chatbot component
+import BuyerSellerChatbot from "./components/BuyerSellerChatbot";
+
 function App() {
   return (
     <Router>
@@ -43,11 +46,14 @@ function App() {
         <Route path="/buyer/product/:productId" element={<ProductDetail />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/orders" element={<Orders />} />
-        <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+<Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+
         <Route
           path="/buyer/reviews/:productId/:productName"
           element={<Reviews />}
         />
+        {/* 🔹 NEW: Chatbot Route */}
+        <Route path="/chatbot" element={<BuyerSellerChatbot />} />
 
         {/* Optional shortcut routes */}
         <Route path="/shop" element={<Shop />} />
