@@ -8,8 +8,8 @@ admin.initializeApp();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "revathis19112006@gmail.com",      // your Gmail
-    pass: "tzjwmixgvbflmyjc",         // 16-char App Password
+    user: "cartifyteam2026@gmail.com",      // your Gmail
+    pass: "kajtfworkjkzvyqn",         // 16-char App Password
   }
 });
 
@@ -30,11 +30,28 @@ exports.sendOrderDeliveredEmail = onDocumentUpdated(
 
     // Email content
     const mailOptions = {
-      from: '"cartify@gmail.com',
-      to: userEmail,
-      subject: "Your Order Has Been Delivered!",
-      text: `Hello! Your order with ID ${orderId} has been delivered. Thank you for shopping with us!`
-    };
+  from: '"Cartify Team" <cartifyteam2025@gmail.com>',
+  to: userEmail,
+  subject: "🎉 Your Cartify Order Has Been Delivered!",
+  text: `
+Hello 👋,
+
+Great news! 🚚✨
+
+Your order with ID: ${orderId} has been successfully delivered to your address.
+
+We hope you enjoy your purchase and had a smooth shopping experience with Cartify 🛒💙
+
+If you have any questions, feedback, or need support, feel free to reply to this email — we're always happy to help!
+
+Thank you for choosing Cartify.
+We look forward to serving you again 😊
+
+Warm regards,
+Cartify Team
+`
+};
+
 
     try {
       // Send email

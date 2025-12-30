@@ -1,4 +1,3 @@
-// src/pages/Buyer/BuyerSignup.jsx
 import { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
 import {
@@ -11,6 +10,17 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaLock,
+  FaPaperPlane,
+  FaLocationArrow,
+  FaSpinner,
+} from "react-icons/fa";
+
+import "../../assets/css/BuyerSignup.css";
 
 const markerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -20,296 +30,252 @@ const markerIcon = new L.Icon({
 });
 
 export default function BuyerSignup() {
+  const navigate = useNavigate();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [latLng, setLatLng] = useState(null);
-  const [error, setError] = useState("");
-
+  const [address, setAddress] = useState(""); // ✅ FIX
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [latLng, setLatLng] = useState(null);
 
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
 
-  // ✅ Setup reCAPTCHA
   useEffect(() => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
         "recaptcha-container",
-        {
-          size: "invisible",
-        }
+        { size: "invisible" }
       );
       window.recaptchaVerifier.render();
     }
   }, []);
 
-  // 🔹 Reverse Geocoding
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (latLng) {
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latLng.lat}&lon=${latLng.lng}`
-          );
-          const data = await res.json();
-          if (data?.display_name) setAddress(data.display_name);
-        } catch (err) {
-          console.error("Failed to fetch address:", err);
-        }
-      }
-    };
-    fetchAddress();
-  }, [latLng]);
-
-  // 🔹 OTP Send
   const handleSendOTP = async () => {
-    setError("");
-    if (!phone) return setError("Enter a valid phone number first.");
-
+    if (!phone) return setError("Enter phone number");
+    setOtpLoading(true);
     try {
-      let cleanPhone = phone.replace(/\s+/g, "").trim();
-      if (!cleanPhone.startsWith("+")) cleanPhone = "+91" + cleanPhone;
-
-      const appVerifier = window.recaptchaVerifier;
-      const confirmationResult = await signInWithPhoneNumber(
+      const confirmation = await signInWithPhoneNumber(
         auth,
-        cleanPhone,
-        appVerifier
+        "+91" + phone,
+        window.recaptchaVerifier
       );
-      window.confirmationResult = confirmationResult;
+      window.confirmationResult = confirmation;
       setOtpSent(true);
-      alert("OTP sent to your phone number!");
+      setSuccess("OTP sent successfully");
+      setError("");
     } catch (err) {
-      setError("Failed to send OTP: " + err.message);
+      setError(err.message);
+    } finally {
+      setOtpLoading(false);
     }
   };
 
-  // 🔹 OTP Verify
   const handleVerifyOTP = async () => {
-    setError("");
-    if (!otp) return setError("Enter OTP to verify.");
     try {
       await window.confirmationResult.confirm(otp);
       setOtpVerified(true);
-      alert("Phone OTP verified successfully!");
+      setSuccess("Phone verified");
+      setError("");
     } catch {
-      setError("Invalid OTP. Try again.");
+      setError("Invalid OTP");
     }
   };
 
-  // 🔹 Signup
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
-    if (!otpVerified) return setError("Please verify your phone OTP first.");
-    if (!latLng) return setError("Please set your location on the map.");
 
+    if (!otpVerified) return setError("Verify OTP first");
+    if (!latLng) return setError("Select location");
+
+    setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const uid = userCredential.user.uid;
+      const user = await createUserWithEmailAndPassword(auth, email, password);
 
-      let cleanPhone = phone.replace(/\s+/g, "").trim();
-      if (!cleanPhone.startsWith("+")) cleanPhone = "+91" + cleanPhone;
-
-      await setDoc(doc(db, "buyers", uid), {
+      await setDoc(doc(db, "buyers", user.user.uid), {
         firstName,
         lastName,
-        fullName: `${firstName} ${lastName}`,
-        address,
-        phone: cleanPhone,
         email,
+        phone,
+        address,        // ✅ FIX
         latLng,
-        role: "buyer",
-        isLocationVerified: !!latLng,
         createdAt: serverTimestamp(),
       });
 
-      alert("Signup successful! Please login.");
-      navigate("/buyer/login");
+      setSuccess("Signup successful");
+      setTimeout(() => navigate("/buyer/login"), 2000);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
+const handleLocation = async () => {
+  if (!navigator.geolocation) {
+    setError("Geolocation not supported");
+    return;
+  }
 
-  // 🔹 Geolocation
-  const handleUseMyLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) =>
-          setLatLng({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          }),
-        () => setError("Failed to get current location. Please allow access.")
-      );
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const latitude = pos.coords.latitude;
+      const longitude = pos.coords.longitude;
+
+      // ✅ Map location
+      setLatLng({
+        lat: latitude,
+        lng: longitude,
+      });
+
+      // ✅ Convert lat/lng to address
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        );
+        const data = await res.json();
+
+        setAddress(data.display_name || "");
+      } catch (err) {
+        setError("Unable to fetch address");
+      }
+    },
+    () => {
+      setError("Location permission denied");
     }
-  };
+  );
+};
+
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-4">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 space-y-6">
-        <h2 className="text-3xl font-extrabold text-center text-blue-700">
-          Buyer Signup
-        </h2>
-        {error && (
-          <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg">
-            {error}
-          </p>
-        )}
+    <div className="buyer-signup-container">
+      <div className="signup-card">
+        <h1 className="title">Join Buyer Community</h1>
+        <p className="subtitle">Create account & explore deals</p>
 
-        <form onSubmit={handleSignup} className="space-y-4">
-          {/* Name */}
-          <div className="grid grid-cols-2 gap-3">
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
+
+        <form onSubmit={handleSignup}>
+          <div className="row">
+            <div className="field">
+              <FaUser />
+              <input
+                className="input-field"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="field">
+              <FaUser />
+              <input
+                className="input-field"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <FaEnvelope />
             <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              className="input-field"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              className="border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-              className="border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
 
-          {/* Address */}
+          <div className="field">
+            <FaPhone />
+            <input
+              className="input-field"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="field">
+            <FaLock />
+            <input
+              className="input-field"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {!otpSent ? (
+            <button type="button" className="btn otp-btn" onClick={handleSendOTP}>
+              {otpLoading ? <FaSpinner className="spin" /> : <FaPaperPlane />}
+              Send OTP
+            </button>
+          ) : (
+            <div className="otp-box">
+              <input
+                className="otp-input"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+              <button type="button" className="btn verify-btn" onClick={handleVerifyOTP}>
+                Verify
+              </button>
+            </div>
+          )}
+
+          {/* ✅ Address */}
           <textarea
             placeholder="Full Address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
+            className="address-box"
           />
 
-          {/* Phone */}
-          <input
-            type="text"
-            placeholder="Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\s+/g, ""))}
-            required
-            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
+          <button type="button" className="btn location-btn" onClick={handleLocation}>
+            <FaLocationArrow /> Use My Location
+          </button>
 
-          {/* Email */}
-          <input
-            type="email"
-            placeholder="Email ID"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          {/* Password */}
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          {/* Recaptcha */}
-          <div id="recaptcha-container"></div>
-
-          {/* OTP Section */}
-          {!otpSent ? (
-            <button
-              type="button"
-              onClick={handleSendOTP}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg font-semibold transition"
-            >
-              Send OTP
-            </button>
-          ) : (
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="flex-1 border rounded-lg p-3 focus:ring-2 focus:ring-green-400 outline-none"
-              />
-              <button
-                type="button"
-                onClick={handleVerifyOTP}
-                className="bg-green-500 hover:bg-green-600 text-white px-5 rounded-lg font-semibold transition"
-              >
-                Verify
-              </button>
-            </div>
-          )}
-          {otpVerified && (
-            <p className="text-green-600 text-sm text-center">
-              ✅ Phone OTP Verified
-            </p>
-          )}
-
-          {/* Map */}
           {latLng && (
-            <div className="rounded-lg overflow-hidden border shadow-md">
-              <MapContainer
-                center={latLng}
-                zoom={16}
-                style={{ height: "250px", width: "100%" }}
-              >
+            <div className="map-container">
+              <MapContainer center={latLng} zoom={15} style={{ height: "250px" }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker
-                  position={latLng}
-                  icon={markerIcon}
-                  draggable={true}
-                  eventHandlers={{
-                    dragend: (e) => {
-                      const newLatLng = e.target.getLatLng();
-                      setLatLng({ lat: newLatLng.lat, lng: newLatLng.lng });
-                    },
-                  }}
-                >
-                  <Popup>Drag to adjust your location</Popup>
+                <Marker position={latLng} icon={markerIcon}>
+                  <Popup>Your location</Popup>
                 </Marker>
               </MapContainer>
             </div>
           )}
 
-          {/* Location Button */}
-          <button
-            type="button"
-            onClick={handleUseMyLocation}
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-semibold transition"
-          >
-            Use My Current Location
+          <div id="recaptcha-container"></div>
+
+          <button className="btn submit-btn" disabled={loading}>
+            {loading ? <FaSpinner className="spin" /> : "Create Account"}
           </button>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={!otpVerified}
-            className={`w-full py-3 rounded-lg text-white font-bold transition ${
-              otpVerified
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Sign Up
-          </button>
+          <p className="login-text">
+            Already have account?
+            <span onClick={() => navigate("/buyer/login")}> Login</span>
+          </p>
         </form>
       </div>
     </div>

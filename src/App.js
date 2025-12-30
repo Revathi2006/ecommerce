@@ -30,6 +30,9 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 
 // 🔹 Chatbot component
 import BuyerSellerChatbot from "./components/BuyerSellerChatbot";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/TermsAndConditions";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
@@ -74,6 +77,14 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/approve" element={<AdminApprove />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+      
+<Route path="/contact" element={<Contact />} />
+
+<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+<Route path="/terms" element={<Terms />} />
+
+
+
       </Routes>
     </Router>
   );

@@ -1,0 +1,178 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.buyer-signup-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f2fe, #fdf4ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.input-field {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.otp-btn {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+}
+
+.verify-btn {
+  background: #10b981;
+  color: white;
+}
+
+.location-btn {
+  background: #6366f1;
+  color: white;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #2563eb, #9333ea);
+  color: white;
+  margin-top: 20px;
+}
+
+.otp-box {
+  display: flex;
+  gap: 10px;
+}
+
+.otp-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.map-container {
+  margin-top: 15px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.success {
+  background: #dcfce7;
+  color: #166534;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.login-text {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-text span {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.address-box {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid #c7d2fe;
+  background: #f8fafc;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.address-box:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
